@@ -2,6 +2,7 @@ package com.devfabricio.springcrud.servicesImpl;
 
 import com.devfabricio.springcrud.dto.UserDto;
 import com.devfabricio.springcrud.entities.User;
+import com.devfabricio.springcrud.mapper.StructUserMapper;
 import com.devfabricio.springcrud.mapper.UserMapper;
 import com.devfabricio.springcrud.repositories.UserRepository;
 import com.devfabricio.springcrud.services.UserService;
@@ -24,11 +25,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
         // Convert UserDto into user JPA Entity
-        User user = modelMapper.map(userDto, User.class);
+        User user = StructUserMapper.MAPPER.mapToUser(userDto);
         User savedUser = userRepository.save(user);
 
         // Convert User JPA Entity to UserDto
-        UserDto savedUserDto = UserMapper.mapToUserDto(savedUser);modelMapper.map(savedUser, UserDto.class);
+        UserDto savedUserDto = StructUserMapper.MAPPER.mapToUserDto(savedUser);
         return savedUserDto;
     }
 
@@ -36,14 +37,14 @@ public class UserServiceImpl implements UserService {
     public UserDto getUserById(Long userId) {
         Optional<User> optionalUser = userRepository.findById(userId);
         User user = optionalUser.get();
-        return modelMapper.map(user, UserDto.class);
+        return StructUserMapper.MAPPER.mapToUserDto(optionalUser.get());
     }
 
     @Override
     public List<UserDto> getAllUsers() {
         List<User> users = userRepository.findAll();
         return users.stream()
-                .map((user) -> modelMapper.map(user, UserDto.class))
+                .map((user) -> StructUserMapper.MAPPER.mapToUserDto(user))
                 .collect(Collectors.toList());
     }
 
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(existingUser);
 
         User updatedUser = userRepository.save(existingUser);
-        return modelMapper.map(updatedUser, UserDto.class);
+        return StructUserMapper.MAPPER.mapToUserDto(updatedUser);
     }
 
     @Override
